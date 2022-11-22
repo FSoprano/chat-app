@@ -1,15 +1,17 @@
+<!DOCTYPE html>
 <html>
     <head>
 
     </head>
     <body>
-        <h1>Chat App</h1>
-        <button id="increment">+ 1</button>
+        Chat App
+        
+        <form id="message-form">
+            <input name="message" placeholder="Message">
+            <button>Send</button>
+        </form>
+
         <script src="/socket.io/socket.io.js"></script>
-        <!-- socket.io/socket.io.js is a client side script that we can call 
-        because we've set up the socket.io server. That gives us access to the 
-        client side library. -->
         <script src="/js/chat.js"></script>
-        <!-- chat.js has access to stuff provided by socket.io.js -->
     </body>
 </html>

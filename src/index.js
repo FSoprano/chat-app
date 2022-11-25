@@ -21,7 +21,6 @@ io.on('connection', (socket) => {
         io.emit('message', message)
     })
 })
-
 server.listen(port, () => {
     console.log(`Server is up on port ${port}!`)
 })

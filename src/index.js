@@ -32,6 +32,13 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         io.emit('message', 'A user has left!')
     })
+
+    socket.on('sendLocation', (coords) => {
+        // io.emit('message',`My location is: ${coords.latitude}, ${coords.longitude}`)
+        // In Google Maps:
+        io.emit('message',`https://google.com/maps?q=${coords.latitude},${coords.longitude}`)
+    })
+    
 })
 server.listen(port, () => {
     console.log(`Server is up on port ${port}!`)

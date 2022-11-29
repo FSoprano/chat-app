@@ -2,6 +2,7 @@ const path = require('path')
 const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
+const Filter = require('bad-words')
 
 const app = express()
 const server = http.createServer(app)
@@ -21,9 +22,16 @@ io.on('connection', (socket) => {
     // socket connection is referring to.
     socket.broadcast.emit('message', 'A new user has joined!')
 
-    socket.on('sendMessage', (message) => {
+    socket.on('sendMessage', (message, callback) => {
+        const filter = new Filter()
+        // isProfane is a bad-words method!
+        if (filter.isProfane(message)) {
+            return callback('Profanity is not allowed!')
+        }
         // io.emits sends a message to all connections (all participants)
         io.emit('message', message)
+        // acknowledgement:
+        callback()
     })
     // disconnect is another built-in event, like connection. It does not have to be defined.
     // We want to send a message when a participant leaves the chat. We don't have to use broadcast
@@ -33,10 +41,12 @@ io.on('connection', (socket) => {
         io.emit('message', 'A user has left!')
     })
 
-    socket.on('sendLocation', (coords) => {
+    socket.on('sendLocation', (coords, callback) => {
         // io.emit('message',`My location is: ${coords.latitude}, ${coords.longitude}`)
         // In Google Maps:
-        io.emit('message',`https://google.com/maps?q=${coords.latitude},${coords.longitude}`)
+        io.emit('message',
+        `https://google.com/maps?q=${coords.latitude},${coords.longitude}`)
+        callback()
     })
     
 })

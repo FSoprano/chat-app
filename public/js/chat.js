@@ -1,5 +1,8 @@
 const socket = io()
 
+// server (emit) => client (receive) --acknowledgement --> server
+// client (emit) => server (receive) --acknowledgement --> client
+
 socket.on('message', (message) => {
     console.log(message)
 })
@@ -12,7 +15,12 @@ document.querySelector('#message-form').addEventListener('submit', (e) => {
     // because the element IDs might change, or the target element is no longer 
     // the first (only) element of its type.
 
-    socket.emit('sendMessage', message)
+    socket.emit('sendMessage', message, (error) => {
+        if (error) {
+            return console.log(error)
+        }
+        console.log('Message delivered.')
+    })
 })
 // Button that discloses one's location to the other participants
 document.querySelector('#send-location').addEventListener('click', () => {
@@ -24,6 +32,8 @@ document.querySelector('#send-location').addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition((position) => {
         // position is an object returned by the function.
         const pos = { latitude: position.coords.latitude, longitude: position.coords.longitude }
-        socket.emit('sendLocation', pos)
+        socket.emit('sendLocation', pos, () => {
+            console.log('Location shared.')
+        })
     })
 })

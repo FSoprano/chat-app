@@ -10,6 +10,7 @@ const $messages = document.querySelector('#messages')
 
 // Templates:
 const messageTemplate = document.querySelector('#message-template').innerHTML
+const locationTemplate = document.querySelector('#location-template').innerHTML
 // innerHTML: we want the div inside the template
 
 // server (emit) => client (receive) --acknowledgement --> server
@@ -27,6 +28,15 @@ socket.on('message', (message) => {
     $messages.insertAdjacentHTML('beforeend', html)
     // 'beforeend' one of the possible options, which means before the closing </div> tag.
 
+})
+socket.on('locationMessage', (url) => {
+    console.log(url)
+    const link = Mustache.render(locationTemplate, {
+        url
+        // shorthand for 'url: url'
+    })
+    // Inserting the template content in the messages div:
+    $messages.insertAdjacentHTML('beforeend', link)
 })
 
 $messageForm.addEventListener('submit', (e) => {

@@ -19,10 +19,17 @@ const locationTemplate = document.querySelector('#location-template').innerHTML
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate, {
-        message
-        // shorthand for 'message: message'
-        // What we pass in here as the value of the message key is the message that this function 
-        // works on, allowing us to render different (dynamic) content to the HTML user interface.
+       // message
+       // Since the introduction of the generateMessage function in utils/messages.js,
+       // the message parameter has become an object. This means, in order to render the 
+       // message properly on the client side, we cannot use the shorthand anymorem, since 
+       // we need to access just one property of the object (text). Hence we have to write 
+       // it like this:
+       message: message.text,
+       createdAt: moment(message.createdAt).format('h:mm a')
+       // moment() is for time formatting. We have access to this function because we loaded
+       // the script library in in index.html (2nd script tag)
+       // docs on momentjs.com
     })
     // Inserting the template content in the messages div:
     $messages.insertAdjacentHTML('beforeend', html)

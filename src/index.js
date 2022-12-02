@@ -3,6 +3,8 @@ const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
+// object deconstruction:
+const { generateMessage } = require('./utils/messages')
 
 const app = express()
 const server = http.createServer(app)
@@ -17,10 +19,10 @@ io.on('connection', (socket) => {
     console.log('New WebSocket connection')
     // socket.emit sends a message to a particular connection, for example, when a new user 
     // connects.
-    socket.emit('message', 'Welcome!')
+    socket.emit('message', generateMessage('Welcome!'))
     // broadcast emit sends the message to all participants, except the one that the 
     // socket connection is referring to.
-    socket.broadcast.emit('message', 'A new user has joined!')
+    socket.broadcast.emit('message', generateMessage('A new user has joined!'))
 
     socket.on('sendMessage', (message, callback) => {
         const filter = new Filter()
@@ -29,7 +31,7 @@ io.on('connection', (socket) => {
             return callback('Profanity is not allowed!')
         }
         // io.emits sends a message to all connections (all participants)
-        io.emit('message', message)
+        io.emit('message', generateMessage(message))
         // acknowledgement:
         callback()
     })
@@ -38,7 +40,7 @@ io.on('connection', (socket) => {
     // because the user has already disconnected when this function runs; io.emit will send the 
     // message to the remaining participants.
     socket.on('disconnect', () => {
-        io.emit('message', 'A user has left!')
+        io.emit('message', generateMessage('A user has left!'))
     })
 
     socket.on('sendLocation', (coords, callback) => {

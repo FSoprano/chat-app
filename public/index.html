@@ -15,7 +15,7 @@
         <!-- Template for the display of messages on the user interface -->
         <script id="message-template" type="text/html">
             <div>
-                <p>{{message}}</p>
+                <p>{{createdAt}} - {{message}}</p>
                 <!-- {{message}} this is Mustache syntax. It will inject the value 
                 of message in here. This value is the second parameter of Mustache.render 
                 in chat.js, which is an object. Since the key of that value is message, 

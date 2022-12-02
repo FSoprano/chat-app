@@ -36,11 +36,11 @@ socket.on('message', (message) => {
     // 'beforeend' one of the possible options, which means before the closing </div> tag.
 
 })
-socket.on('locationMessage', (url) => {
-    console.log(url)
+socket.on('locationMessage', (location) => {
+    console.log(location)
     const link = Mustache.render(locationTemplate, {
-        url
-        // shorthand for 'url: url'
+        url: location.url,
+        createdAt: moment(location.createdAt).format('h:mm a')
     })
     // Inserting the template content in the messages div:
     $messages.insertAdjacentHTML('beforeend', link)

@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <title>Chat App</title>
+        <link rel="icon" href="/img/favicon.png">
+        <link rel="stylesheet" href="./css/styles.min.css">
     </head>
     <body>
-        Chat App
-        <div id="messages"></div>
-        <form id="message-form">
-            <input name="message" placeholder="Message">
-            <button>Send</button>
-        </form>
-        <button id="send-location">Send Location</button>
+        <div class="chat">
+            <div class="chat__sidebar"></div>
+            <div class="chat__main">
+                <div id="messages" class="chat__messages"></div>
+                <div class="compose"><form id="message-form">
+                    <input name="message" placeholder="Message">
+                    <button>Send</button>
+                </form>
+                <button id="send-location">Send Location</button></div>
+            </div>
+        </div>
+        
 
         <!-- Template for the display of messages on the user interface -->
         <script id="message-template" type="text/html">
-            <div>
-                <p>{{createdAt}} - {{message}}</p>
+            <div class="message">
+                <p>
+                    <span class="message__name">Some User Name</span>
+                    <span class="message__meta">{{createdAt}}</span>
+                </p>
+                <p>{{message}}</p>
                 <!-- {{message}} this is Mustache syntax. It will inject the value 
                 of message in here. This value is the second parameter of Mustache.render 
                 in chat.js, which is an object. Since the key of that value is message, 
@@ -24,8 +35,12 @@
             </div>
         </script>
         <script id="location-template" type="text/html">
-            <div>
-                <p>{{createdAt}} - <a href="{{url}}" target="_blank">My current location</a></p>
+            <div class="message">
+                <p>
+                    <span class="message__name">Some User Name</span>
+                    <span class="message__meta">{{createdAt}}</span>
+                </p>
+                <p><a href="{{url}}" target="_blank">My current location</a></p>
                <!-- target="_blank" will open the URL in a new, separate browser tab.-->
             </div>
         </script>

@@ -19,10 +19,23 @@ io.on('connection', (socket) => {
     console.log('New WebSocket connection')
     // socket.emit sends a message to a particular connection, for example, when a new user 
     // connects.
-    socket.emit('message', generateMessage('Welcome!'))
-    // broadcast emit sends the message to all participants, except the one that the 
-    // socket connection is referring to.
-    socket.broadcast.emit('message', generateMessage('A new user has joined!'))
+   
+    // Listening for the 'join' event:
+    socket.on('join', ( {username, room} ) => {
+        // joining the specified chat room:
+        socket.join(room)
+        // Relocated events, used to be outside the join event before; now we only want to 
+        // emit these when a user has joined a chat room:
+        socket.emit('message', generateMessage('Welcome!'))
+        // broadcast emit sends the message to all participants (client sockets), except the one that the 
+        // emitting socket connection is referring to.
+        socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`))
+        // slightly modified: using the to() function in between, we make sure that the 
+        // message is only emitted to members of the chat room, except for the user who joined.
+    
+        // io.to.emit sends a message to just the participants of the chosen chat room, that is,
+        // without sending it to people in other chat rooms.
+    })
 
     socket.on('sendMessage', (message, callback) => {
         const filter = new Filter()
@@ -31,7 +44,7 @@ io.on('connection', (socket) => {
             return callback('Profanity is not allowed!')
         }
         // io.emits sends a message to all connections (all participants)
-        io.emit('message', generateMessage(message))
+        io.to('Italy').emit('message', generateMessage(message))
         // acknowledgement:
         callback()
     })

@@ -16,6 +16,15 @@ const locationTemplate = document.querySelector('#location-template').innerHTML
 // server (emit) => client (receive) --acknowledgement --> server
 // client (emit) => server (receive) --acknowledgement --> client
 
+// Options:
+// These option use the Query String (qs) library, which is loaded in chat.html (3rd script tag).
+// We have access to location.search, which is an object that returns the query string on the 
+// client console when entered. This means we can use it here to return an object with 
+// 2 key/value pairs, 'username' and 'room'.
+
+const { username, room } = Qs.parse( location.search, { ignoreQueryPrefix: true })
+// ignoreQueryPrefix removes the '?' at the beginning of the query string.
+
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate, {
@@ -94,3 +103,6 @@ $sendLocationButton.addEventListener('click', () => {
         })
     })
 })
+// sending the chosen username and chatroom to the server (new event 'join' that the server 
+// will listen for):
+socket.emit( 'join', {username, room} )

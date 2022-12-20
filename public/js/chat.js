@@ -105,4 +105,9 @@ $sendLocationButton.addEventListener('click', () => {
 })
 // sending the chosen username and chatroom to the server (new event 'join' that the server 
 // will listen for):
-socket.emit( 'join', {username, room} )
+socket.emit( 'join', {username, room}, (error) => {
+    if (error) {
+        alert(error)
+        location.href = '/' // Refer back to the root of the site, that is, the join page.
+    }
+})

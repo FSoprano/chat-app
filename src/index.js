@@ -42,10 +42,10 @@ io.on('connection', (socket) => {
         // Letting the clients know they were able to join:
         // Relocated events, used to be outside the join event before; now we only want to 
         // emit these when a user has joined a chat room:
-        socket.emit('message', generateMessage('Welcome!'))
+        socket.emit('message', generateMessage('Admin: ', 'Welcome!'))
         // broadcast emit sends the message to all participants (client sockets), except the one that the 
         // emitting socket connection is referring to.
-        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined!`))
+        socket.broadcast.to(user.room).emit('message', generateMessage('Admin: ',`${user.username} has joined!`))
         // slightly modified: using the to() function in between, we make sure that the 
         // message is only emitted to members of the chat room, except for the user who joined.
         // io.to.emit sends a message to just the participants of the chosen chat room, that is,
@@ -55,14 +55,12 @@ io.on('connection', (socket) => {
     })
 
     socket.on('sendMessage', (message, callback) => {
+        const user = getUser(socket.id)
         const filter = new Filter()
-        // isProfane is a bad-words method!
         if (filter.isProfane(message)) {
             return callback('Profanity is not allowed!')
         }
-        // io.emits sends a message to all connections (all participants)
-        io.to('Italy').emit('message', generateMessage(message))
-        // acknowledgement:
+        io.to(user.room).emit('message', generateMessage(user.username, message))
         callback()
     })
     // disconnect is another built-in event, like connection. It does not have to be defined.
@@ -78,15 +76,13 @@ io.on('connection', (socket) => {
             // left' because nobody has seen this user join. However, if a user object exists, 
             // the user has joined a room.
             // Hence we move the io.emit call inside this conditional logic.
-            io.to(user.room).emit('message', generateMessage(`${user.username} has left!`))
+            io.to(user.room).emit('message', generateMessage('Admin: ',`${user.username} has left!`))
         }
     })
 
     socket.on('sendLocation', (coords, callback) => {
-        // io.emit('message',`My location is: ${coords.latitude}, ${coords.longitude}`)
-        // In Google Maps:
-        io.emit('locationMessage',
-        generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`))
+        const user = getUser(socket.id)
+        io.to(user.room).emit('locationMessage', generateLocationMessage(user.username, `https://google.com/maps?q=${coords.latitude},${coords.longitude}`))
         callback()
     })
     

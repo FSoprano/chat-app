@@ -34,6 +34,7 @@ socket.on('message', (message) => {
        // message properly on the client side, we cannot use the shorthand anymorem, since 
        // we need to access just one property of the object (text). Hence we have to write 
        // it like this:
+       username: message.username,
        message: message.text,
        createdAt: moment(message.createdAt).format('h:mm a')
        // moment() is for time formatting. We have access to this function because we loaded
@@ -48,6 +49,7 @@ socket.on('message', (message) => {
 socket.on('locationMessage', (location) => {
     console.log(location)
     const link = Mustache.render(locationTemplate, {
+        username: location.username,
         url: location.url,
         createdAt: moment(location.createdAt).format('h:mm a')
     })

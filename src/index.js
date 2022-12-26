@@ -50,6 +50,13 @@ io.on('connection', (socket) => {
         // message is only emitted to members of the chat room, except for the user who joined.
         // io.to.emit sends a message to just the participants of the chosen chat room, that is,
         // without sending it to people in other chat rooms.
+
+        // Getting the list of users. This list is updated when a user joins, and when a user 
+        // disconnects.
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        })
         callback()
       
     })
@@ -69,14 +76,21 @@ io.on('connection', (socket) => {
     // message to the remaining participants.
     socket.on('disconnect', () => {
         user = removeUser(socket.id)
-
-        if (user) {
             // It is thinkable that a user never joined a room, for example if invalid data   
             // was entered. In this case, it would be useless to emit a message saying 'user x has 
             // left' because nobody has seen this user join. However, if a user object exists, 
             // the user has joined a room.
-            // Hence we move the io.emit call inside this conditional logic.
+            // Hence we move the io.emit call inside this conditional logic:
+
+        if (user) {
+
             io.to(user.room).emit('message', generateMessage('Admin: ',`${user.username} has left!`))
+            // Updating the list of users:
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            })
+            
         }
     })
 

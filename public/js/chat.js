@@ -21,6 +21,7 @@ const locationTemplate = document.querySelector('#location-template').innerHTML
 // We have access to location.search, which is an object that returns the query string on the 
 // client console when entered. This means we can use it here to return an object with 
 // 2 key/value pairs, 'username' and 'room'.
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 // ignoreQueryPrefix removes the '?' at the beginning of the query string.
@@ -55,6 +56,13 @@ socket.on('locationMessage', (location) => {
     })
     // Inserting the template content in the messages div:
     $messages.insertAdjacentHTML('beforeend', link)
+})
+socket.on('roomData', ({room, users}) => {
+    const html = Mustache.render(sidebarTemplate, {
+        room,
+        users
+    })
+    document.querySelector('#sidebar').innerHTML = html
 })
 
 $messageForm.addEventListener('submit', (e) => {

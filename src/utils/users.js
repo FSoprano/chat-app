@@ -50,14 +50,11 @@ const removeUser = (id) => {
   
 }
 const getUser = (id) => {
-    return users.find( (user) => {
-        return user.id === id
-    })
+    return users.find((user) => user.id === id)
 }
 const getUsersInRoom = (room) => {
-    return roomMatch = users.filter((user) => {
-        return user.room === room
-    })
+    room = room.trim().toLowerCase()
+    return users.filter((user) => user.room === room)
 }
 module.exports = {
     addUser,

@@ -26,6 +26,43 @@ const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 // ignoreQueryPrefix removes the '?' at the beginning of the query string.
 
+const autoscroll = () => {
+    // Grabbing the new message element:
+    const $newMessage = $messages.lastElementChild
+    // Height of the new message:
+    const newMessageStyles = getComputedStyle($newMessage)
+    // getComputedStyle() is made avaiable through the browser.
+    // We want the height of the margin bottom as a number so we can add it to 
+    // offsetHeight. parseInt takes in a string and returns a number.
+    const newMessageMargin = parseInt(newMessageStyles.marginBottom)
+    const newMessageHeight = $newMessage.offsetHeight + newMessageMargin
+    // Great start, but this does not take the margin into account.
+    // Outputting the styles on the console:
+    console.log(newMessageStyles)
+    // Outputting the margin bottom as a number.
+    console.log(newMessageMargin)
+    // The visible height:
+    const visibleHeight = $messages.offsetHeight
+    // The container height (content height, much larger than visible height, as it includes 
+    // parts one does not see.)
+    const containerHeight = $messages.scrollHeight
+    // To decide whether to autoscroll, we need the current scrolling position of the reader(client).
+    // We need to know how far we are from the bottom:
+    const scrollOffset = $messages.scrollTop + visibleHeight
+    // A property scrollBottom does not exist, so we'll use a calculation. The position in relation
+    // to the bottom is 
+    // the distance from the top to the top of the scollbar. The top of the scrollbar equals the 
+    // visibleHeight.
+    if (containerHeight - newMessageHeight <= scrollOffset) {
+        // condition: We want to know if the user is close to or at the bottom, 
+        // so we first need to now container height before the new message comes in.
+        // If this condition is true, we want to autoscroll:
+        $messages.scrollTop = $messages.scrollHeight
+        // Hint: Not only can we extract the scrollTop; we can also set it.
+
+    }
+}
+
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate, {
@@ -45,6 +82,7 @@ socket.on('message', (message) => {
     // Inserting the template content in the messages div:
     $messages.insertAdjacentHTML('beforeend', html)
     // 'beforeend' one of the possible options, which means before the closing </div> tag.
+    autoscroll()
 
 })
 socket.on('locationMessage', (location) => {
@@ -56,6 +94,7 @@ socket.on('locationMessage', (location) => {
     })
     // Inserting the template content in the messages div:
     $messages.insertAdjacentHTML('beforeend', link)
+    autoscroll()
 })
 socket.on('roomData', ({room, users}) => {
     const html = Mustache.render(sidebarTemplate, {
